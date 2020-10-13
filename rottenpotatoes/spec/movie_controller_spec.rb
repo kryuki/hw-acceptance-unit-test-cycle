@@ -11,6 +11,16 @@ describe MoviesController, type: 'controller' do
           get :search_directors, { id: 100 }
           end
         end 
+      
+      #no director
+      describe 'movie does not have a director' do
+        # integration test (route spec)
+        it 'redirect to homepage' do
+          @movie = Movie.create(:id => "100", title: "Titanic", director: nil)
+          get :search_directors, { id: 100 }
+          expect(response).to redirect_to(movies_path)
+          end
+        end 
 
       describe 'search similar movies' do
         it 'queries the Movie model about similar movies' do
