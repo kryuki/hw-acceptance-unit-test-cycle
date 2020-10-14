@@ -1,0 +1,38 @@
+Using the default profile...
+Feature: search for movies by director
+  As a movie buff
+  So that I can find movies with my favorite director
+  I want to include and serach on director information in movies I enter
+
+  Background: movies in database      # features/directors.feature:7
+    Given the following movies exist: # features/step_definitions/movies_steps.rb:2
+      | title        | rating | director     | release_date |
+      | Star Wars    | PG     | George Lucas | 1977-05-25   |
+      | Blade Runner | PG     | Ridley Scott | 1982-06-25   |
+      | Alien        | R      |              | 1979-05-25   |
+      | THX-1138     | R      | George Lucas | 1971-03-11   |
+
+  Scenario: add director to existing movie                # features/directors.feature:16
+    When I go to the edit page for "Alien"                # features/step_definitions/web_steps.rb:48
+    And I fill in "Director" with "Ridley Scott"          # features/step_definitions/web_steps.rb:60
+    And I press "Update Movie Info"                       # features/step_definitions/web_steps.rb:52
+    Then the director of "Alien" should be "Ridley Scott" # features/step_definitions/movies_steps.rb:26
+
+  Scenario: find movie with same director                       # features/directors.feature:22
+    Given I am on the details page for "Star Wars"              # features/step_definitions/web_steps.rb:44
+    When I follow "Find Movies With Same Director"              # features/step_definitions/web_steps.rb:56
+    Then I should be on the Similar Movies page for "Star Wars" # features/step_definitions/web_steps.rb:230
+    And I should see "THX-1138"                                 # features/step_definitions/web_steps.rb:105
+    But I should not see "Blade Runner"                         # features/step_definitions/web_steps.rb:123
+
+  Scenario: can't find similar movies if we don't know director (sad path) # features/directors.feature:29
+    Given I am on the details page for "Alien"                             # features/step_definitions/web_steps.rb:44
+    Then I should not see "Ridley Scott"                                   # features/step_definitions/web_steps.rb:123
+    When I follow "Find Movies With Same Director"                         # features/step_definitions/web_steps.rb:56
+    Then I should be on the home page                                      # features/step_definitions/web_steps.rb:230
+    And I should see "'Alien' has no director info"                        # features/step_definitions/web_steps.rb:105
+
+3 scenarios (3 passed)
+17 steps (17 passed)
+0m0.316s
+Coverage report generated for Cucumber Features, RSpec to /home/ec2-user/environment/hw-acceptance-unit-test-cycle/rottenpotatoes/coverage. 50 / 56 LOC (89.29%) covered.
